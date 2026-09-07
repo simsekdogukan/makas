@@ -45,10 +45,8 @@ class LaunchAtLogin {
             </plist>
             """
             try? plistContent.write(to: plistURL, atomically: true, encoding: .utf8)
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: "/bin/launchctl")
-            process.arguments = ["load", plistURL.path]
-            try? process.run()
+            // Note: We deliberately do NOT run 'launchctl load' here to prevent
+            // launching a duplicate second instance while the app is already running.
         } else {
             let process = Process()
             process.executableURL = URL(fileURLWithPath: "/bin/launchctl")
@@ -83,6 +81,11 @@ class CutPasteEngine {
         if checkAccessibility(prompt: false) {
             setupEventTap()
         } else {
+            // First run: trigger the system prompt cleanly without modal loops
+            if !UserDefaults.standard.bool(forKey: "HasRequestedAccessibility") {
+                UserDefaults.standard.set(true, forKey: "HasRequestedAccessibility")
+                _ = checkAccessibility(prompt: true)
+            }
             startMonitoringPermission()
         }
     }
@@ -101,7 +104,7 @@ class CutPasteEngine {
 
     private func startMonitoringPermission() {
         permissionTimer?.invalidate()
-        permissionTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) { [weak self] timer in
+        permissionTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
             guard let self = self else { return }
             if self.checkAccessibility(prompt: false) {
                 timer.invalidate()
@@ -130,7 +133,7 @@ class CutPasteEngine {
             },
             userInfo: observer
         ) else {
-            print("[Makas] Event tap oluşturulamadı. Erişilebilirlik iznini kontrol edin.")
+            print("[Makas] Event tap oluşturulamadı. Erişilebilirlik izni bekleniyor.")
             return
         }
 
@@ -266,6 +269,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var permissionMenuItem: NSMenuItem!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // Single instance check
+        let bundleID = Bundle.main.bundleIdentifier ?? "com.antigravity.makas"
+        let runningApps = NSRunningApplication.runningApplications(withBundleIdentifier: bundleID)
+        if runningApps.count > 1 {
+            print("[Makas] Başka bir Makas örneği zaten çalışıyor. Çıkılıyor.")
+            exit(0)
+        }
+
+        // Default: Enable launch at login on first launch
+        let defaults = UserDefaults.standard
+        if !defaults.bool(forKey: "HasConfiguredLaunchAtLoginDefault") {
+            defaults.set(true, forKey: "HasConfiguredLaunchAtLoginDefault")
+            let appPath = Bundle.main.executablePath ?? "/Applications/Makas.app/Contents/MacOS/Makas"
+            LaunchAtLogin.setEnabled(true, appPath: appPath)
+        }
+
         buildMenuBar()
         CutPasteEngine.shared.start()
 
@@ -275,30 +294,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             name: .accessibilityStatusChanged,
             object: nil
         )
-
-        if !CutPasteEngine.shared.checkAccessibility(prompt: false) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.showWelcomeAlert()
-            }
-        }
-    }
-
-    private func showWelcomeAlert() {
-        let alert = NSAlert()
-        alert.messageText = "Makas: Erişilebilirlik İzni Gerekli"
-        alert.informativeText = "Finder'da Cmd+X ve Cmd+V tuşlarını kes/yapıştır olarak kullanabilmek için macOS Erişilebilirlik (Accessibility) iznine ihtiyaç duyulmaktadır.\n\nLütfen açılacak ekranda Makas uygulamasına izin verin."
-        alert.addButton(withTitle: "Sistem Ayarlarını Aç")
-        alert.addButton(withTitle: "Daha Sonra")
-        let response = alert.runModal()
-        if response == .alertFirstButtonReturn {
-            CutPasteEngine.shared.promptAccessibility()
-        }
     }
 
     private func buildMenuBar() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
-            button.title = "⌘X"
+            if #available(macOS 11.0, *), let image = NSImage(systemSymbolName: "scissors", accessibilityDescription: "Makas") {
+                button.image = image
+            } else {
+                button.title = "✂️"
+            }
         }
 
         let menu = NSMenu()
@@ -319,7 +324,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         toggleMenuItem.state = CutPasteEngine.shared.isEnabled ? .on : .off
         menu.addItem(toggleMenuItem)
 
-        // Launch at login
+        // Launch at login (default enabled)
         launchAtLoginMenuItem = NSMenuItem(title: "Girişte Otomatik Başlat", action: #selector(toggleLaunchAtLogin), keyEquivalent: "")
         launchAtLoginMenuItem.target = self
         launchAtLoginMenuItem.isEnabled = true
@@ -352,6 +357,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func statusClicked() {
+        if !CutPasteEngine.shared.checkAccessibility(prompt: false) {
+            CutPasteEngine.shared.promptAccessibility()
+        }
         updateMenuState()
     }
 
@@ -401,7 +409,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func toggleLaunchAtLogin() {
-        let currentPath = Bundle.main.executablePath ?? CommandLine.arguments[0]
+        let currentPath = Bundle.main.executablePath ?? "/Applications/Makas.app/Contents/MacOS/Makas"
         let newState = !LaunchAtLogin.isEnabled
         LaunchAtLogin.setEnabled(newState, appPath: currentPath)
         launchAtLoginMenuItem.state = newState ? .on : .off
@@ -417,6 +425,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 }
 
 // MARK: - Main Entry Point
+// Early single instance check
+let runningInstances = NSRunningApplication.runningApplications(withBundleIdentifier: "com.antigravity.makas")
+if runningInstances.count > 1 {
+    exit(0)
+}
+
 let app = NSApplication.shared
 app.setActivationPolicy(.accessory)
 let delegate = AppDelegate()

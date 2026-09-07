@@ -19,10 +19,11 @@ macOS Finder'da varsayılan olarak dosyaları `Cmd+X` ile kesemezsiniz. Dosya ta
 
 ## ✨ Özellikler
 
-* **Minimalist Menü Çubuğu Tasarımı:** Menü çubuğunda sade `⌘X` simgesi ve canlı yeşil durum göstergesi (`● Makas: Aktif`).
-* **Akıllı Metin Ayrımı:** Dosya adı değiştirirken (rename) veya Finder arama çubuğunda yazı yazarken metin kesme/yapıştırma işleminizi bozmaz, metinleri normal şekilde kesip yapıştırabilirsiniz.
-* **Hafif Baloncuk Sesi:** `Cmd + X` yaptığınızda rahatsız etmeyen tatlı ve hafif bir baloncuk (Pop) sesi çalar.
-* **Girişte Otomatik Başlat:** Bilgisayar her açıldığında arka planda otomatik başlama seçeneği.
+* **Minimalist Uygulama Simgesi:** Sade, şık, kabartmalı beyaz Apple squircle zemin üzerinde sadece **X** logosu.
+* **Makas Menü Çubuğu:** Menü çubuğunda zarif makas (✂️) simgesi ve canlı yeşil durum göstergesi (`● Makas: Aktif`).
+* **Akıllı Metin Ayrımı:** Dosya adı değiştirirken (rename) veya Finder arama çubuğunda yazı yazarken metin kesme/yapıştırma işleminizi bozmaz.
+* **Hafif Baloncuk Sesi:** `Cmd + X` yaptığınızda rahatsız etmeyen hafif bir baloncuk (Pop) sesi çalar.
+* **Varsayılan Otomatik Başlatma:** Açılışta otomatik başlatma varsayılan olarak devrededir. Tek kopya koruması sayesinde menü çubuğunda asla mükerrer simge oluşmaz.
 * **Sıfır Kaynak Tüketimi:** Tamamen yerel Swift ile yazılmıştır; bellekte neredeyse hiç yer kaplamaz.
 
 ---

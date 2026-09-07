@@ -53,8 +53,8 @@ cat << 'PLIST' > "${TARGET_DIR}/Contents/Info.plist"
 </plist>
 PLIST
 
-echo "✍️ İmzalanıyor..."
-codesign --force --deep --sign - "${TARGET_DIR}"
+echo "✍️ Sabit kimlikle imzalanıyor..."
+codesign --force --deep -s - -i "com.antigravity.makas" "${TARGET_DIR}"
 
 echo "🚀 Başlatılıyor..."
 open "${TARGET_DIR}"
