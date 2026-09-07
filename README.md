@@ -1,7 +1,7 @@
 <div align="center">
   <img src="icon.png" width="128" height="128" alt="Makas Logo" style="border-radius: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
   <h1>Makas</h1>
-  <p><strong>macOS Finder için eksik olan Cmd+X (Kes) ve Cmd+V (Yapıştır / Taşı) kısayolu kazandıran hafif ve modern menü çubuğu uygulaması.</strong></p>
+  <p><strong>macOS Finder için eksik olan Cmd+X (Kes) ve Cmd+V (Yapıştır / Taşı) kısayolunu sisteme kazandıran minimalist menü çubuğu uygulaması.</strong></p>
 </div>
 
 ---
@@ -19,12 +19,11 @@ macOS Finder'da varsayılan olarak dosyaları `Cmd+X` ile kesemezsiniz. Dosya ta
 
 ## ✨ Özellikler
 
-* **Özel macOS Simgesi:** macOS Sequoia / Sonoma tasarım diline uygun şık squircle uygulama simgesi.
+* **Minimalist Menü Çubuğu Tasarımı:** Menü çubuğunda sade `⌘X` simgesi ve canlı yeşil durum göstergesi (`● Makas: Aktif`).
 * **Akıllı Metin Ayrımı:** Dosya adı değiştirirken (rename) veya Finder arama çubuğunda yazı yazarken metin kesme/yapıştırma işleminizi bozmaz, metinleri normal şekilde kesip yapıştırabilirsiniz.
-* **Hafif Baloncuk Sesi:** `Cmd + X` yaptığınızda geçersiz işlem/hata sesi yerine tatlı ve hafif bir baloncuk (Pop) sesi çalar.
-* **Canlı Durum Göstergesi:** Menü çubuğunda şık bir makas (✂️) simgesi ve yeşil durum göstergesi (`● Makas: Aktif`).
+* **Hafif Baloncuk Sesi:** `Cmd + X` yaptığınızda rahatsız etmeyen tatlı ve hafif bir baloncuk (Pop) sesi çalar.
 * **Girişte Otomatik Başlat:** Bilgisayar her açıldığında arka planda otomatik başlama seçeneği.
-* **Sıfır Kaynak Tüketimi:** Tamamen yerel Swift ile yazılmıştır; Electron veya ağır kütüphaneler içermez, bellekte neredeyse hiç yer kaplamaz.
+* **Sıfır Kaynak Tüketimi:** Tamamen yerel Swift ile yazılmıştır; bellekte neredeyse hiç yer kaplamaz.
 
 ---
 

@@ -298,11 +298,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private func buildMenuBar() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
-            if #available(macOS 11.0, *), let image = NSImage(systemSymbolName: "scissors", accessibilityDescription: "Makas") {
-                button.image = image
-            } else {
-                button.title = "✂️"
-            }
+            button.title = "⌘X"
         }
 
         let menu = NSMenu()
