@@ -16,6 +16,10 @@ mkdir -p "${TARGET_DIR}/Contents/Resources"
 mv "${APP_NAME}" "${TARGET_DIR}/Contents/MacOS/${APP_NAME}"
 chmod +x "${TARGET_DIR}/Contents/MacOS/${APP_NAME}"
 
+if [ -f "AppIcon.icns" ]; then
+    cp "AppIcon.icns" "${TARGET_DIR}/Contents/Resources/AppIcon.icns"
+fi
+
 cat << 'PLIST' > "${TARGET_DIR}/Contents/Info.plist"
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -35,6 +39,10 @@ cat << 'PLIST' > "${TARGET_DIR}/Contents/Info.plist"
     <string>1.0.0</string>
     <key>CFBundleVersion</key>
     <string>1</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
+    <key>CFBundleIconName</key>
+    <string>AppIcon</string>
     <key>LSMinimumSystemVersion</key>
     <string>11.0</string>
     <key>LSUIElement</key>
